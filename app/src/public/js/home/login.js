@@ -8,6 +8,7 @@ const id = document.querySelector("#id"),
 loginBtn.addEventListener("click", login)
 
 function login() {
+    console.log("login")
     const req = {
         id: id.value,
         psword: psword.value,
