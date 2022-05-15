@@ -7,7 +7,7 @@ const id = document.querySelector("#id"),
     registerBtn = document.querySelector("#button")
 
 
-registerBtn.addEventListener("click", register)
+registerBtn.addEventListener("click", register);
 
 function register() {
     if(!id.value)   return alert("아이디를 입력해주세요.");
@@ -31,11 +31,11 @@ function register() {
         .then((res) => res.json())
         .then((res) => {
             if (res.success) {
-                location.href = "/login"
+                location.href = "/login";
             } else {
-                alert(res.msg)
+                alert(res.msg);
             }
         }).catch((err) => {
-            console.error("회원가입 중 에러 발생")
+            console.error("회원가입 중 에러 발생");
         })
 }
