@@ -3,7 +3,7 @@
 const fs = require("fs").promises;
 
 class UserStorage {
-    static #getUserInfo(data, id){
+    static #getUserInfo(data, id) {
         const users = JSON.parse(data);
         const idx = users.id.indexOf(id);
         const usersKeys = Object.keys(users);
@@ -15,7 +15,10 @@ class UserStorage {
         return userInfo;
     }
 
-    static getUsers(...fields) {
+    static #getUsers(data, isAll, fields) {
+        const users = JSON.parse(data);
+        if (isAll) return users;
+
         const newUsers = fields.reduce((newUsers, field) => {
             if (users.hasOwnProperty(field)) {
                 newUsers[field] = users[field];
@@ -25,21 +28,34 @@ class UserStorage {
         return newUsers;
     }
 
-    static getUserInfo(id) {
+    static getUsers(isAll, ...fields) {
         return fs
-        .readFile("./src/DB/users.json")
-        .then((data) => {
-            return this.#getUserInfo(data, id);
-        })
-        .catch(console.error);
+            .readFile("./src/DB/users.json")
+            .then((data) => {
+                return this.#getUsers(data, isAll, fields);
+            })
+            .catch(console.error);
     }
 
-    static save(userInfo) {
-        users.id.push(userInfo.id);
-        users.name.push(userInfo.name);
-        users.psword.push(userInfo.psword);
-        console.log(users);
+    static getUserInfo(id) {
+        return fs
+            .readFile("./src/DB/users.json")
+            .then((data) => {
+                return this.#getUserInfo(data, id);
+            })
+            .catch(console.error);
     }
-}
+
+    static async save(userInfo) {
+        const users = await this.getUsers(true);
+        if (users.id.includes(userInfo.id))
+            throw "이미 존재하는 아이디입니다.";
+        users.id.push(userInfo.id);
+        users.psword.push(userInfo.psword);
+        users.name.push(userInfo.name);
+        fs.writeFile('./src/DB/users.json', JSON.stringify(users));
+        return { success: true };
+    }
+};
 
 module.exports = UserStorage;
